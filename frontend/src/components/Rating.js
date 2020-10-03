@@ -14,7 +14,7 @@ const Rating = ({ value, text, color = "#f8e825" }) => {
 
     const star = getStar();
 
-    return <i className={star} style={{ color }} />;
+    return <i key={i} className={star} style={{ color }} />;
   });
   return (
     <div>
