@@ -1,21 +1,30 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { ListGroup, Row, Col, Card, Image, Button } from "react-bootstrap";
-import axios from "axios";
 import { Link } from "react-router-dom";
 import Rating from "../components/Rating";
+import { useDispatch } from "react-redux";
+import { getProductDetails } from "../redux/actions/productDetailsActions";
+import { useSelector } from "react-redux";
+import Loader from "../components/Loader";
+import Message from "../components/Message";
 
 const ProductPage = ({ match }) => {
-  const [product, setProduct] = useState({});
+  const dispatch = useDispatch();
+  const productDetails = useSelector((state) => state.productDetails);
+
+  const { loading, error, product } = productDetails;
 
   useEffect(() => {
-    const getProduct = async () => {
-      const { data } = await axios.get(`/api/products/${match.params.id}`);
-      setProduct(data);
-    };
+    dispatch(getProductDetails(match.params.id));
+  }, [match.params.id, dispatch]);
 
-    getProduct();
-  }, [match.params.id]);
+  if (loading) {
+    return <Loader />;
+  }
 
+  if (error) {
+    return <Message variant="danger">{error}</Message>;
+  }
   return (
     <>
       <Link to="/" className="btn btn-light mb-3">
