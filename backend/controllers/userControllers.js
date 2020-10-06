@@ -61,3 +61,30 @@ export const getUserProfile = handler(async (req, res) => {
     throw new Error("No user found!");
   }
 });
+
+export const updateUserProfile = handler(async (req, res) => {
+  const user = await User.findById(req.user);
+
+  if (user) {
+    user.name = req.body.name || user.name;
+    user.email = req.body.email || user.email;
+    if (req.body.password) {
+      user.password = req.body.password;
+    }
+    try {
+      const updatedUser = await user.save();
+      res.json({
+        _id: updatedUser._id,
+        name: updatedUser.name,
+        email: updatedUser.email,
+        isAdmin: updatedUser.isAdmin,
+        token: generateToken(updatedUser._id),
+      });
+    } catch (error) {
+      throw new Error("Email already taken");
+    }
+  } else {
+    res.status(401);
+    throw new Erro("No User Fond");
+  }
+});
