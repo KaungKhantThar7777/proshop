@@ -5,7 +5,6 @@ import { Link } from "react-router-dom";
 
 import Message from "../components/Message";
 import { addToCart, removeFromCart } from "../redux/actions/cartActions";
-import { Redirect } from "react-router-dom/cjs/react-router-dom.min";
 
 const CartPage = ({ match, location, history }) => {
   const dispatch = useDispatch();
@@ -17,7 +16,7 @@ const CartPage = ({ match, location, history }) => {
   useEffect(() => {
     if (productId) dispatch(addToCart(productId, qty));
     history.push("/cart");
-  }, [dispatch, qty, productId]);
+  }, [dispatch, qty, productId, history]);
 
   const handleRemoveItem = (id) => {
     dispatch(removeFromCart(id));
