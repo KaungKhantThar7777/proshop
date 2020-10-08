@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { Form, Button, Row, Col } from "react-bootstrap";
+import { Form, Button, Row, Col, Table } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import Message from "../components/Message";
 import Loader from "../components/Loader";
 import { getUserDetails, updateUserProfile } from "../redux/actions/userActions";
+import { getMyOrders } from "../redux/actions/orderActions";
+import { LinkContainer } from "react-router-bootstrap";
 
 const ProfilePage = ({ location, history }) => {
   const [name, setName] = useState("");
@@ -22,12 +24,16 @@ const ProfilePage = ({ location, history }) => {
   const userUpdateProfile = useSelector((state) => state.userUpdateProfile);
   const { success, error } = userUpdateProfile;
 
+  const orderListMy = useSelector((state) => state.orderListMy);
+  const { loading: loadingOrders, error: errorOrders, orders } = orderListMy;
+
   useEffect(() => {
     if (!userInfo) {
       history.push("/login");
     } else {
       if (!user) {
         dispatch(getUserDetails("profile"));
+        dispatch(getMyOrders());
       } else {
         setName(user.name);
         setEmail(user.email);
@@ -98,6 +104,48 @@ const ProfilePage = ({ location, history }) => {
       </Col>
       <Col md={9} className="mt-md-0 mt-3">
         <h2>My Orders</h2>
+        {loadingOrders && <Loader />}
+        {errorOrders && <Message variant="danger">{errorOrders}</Message>}
+        {orders && (
+          <Table striped bordered hover responsive className="table-sm text-center">
+            <thead>
+              <th>Id</th>
+              <th>Date</th>
+              <th>Paid</th>
+              <th>Delivered</th>
+              <th></th>
+            </thead>
+            <tbody>
+              {orders.map(({ _id, createdAt, isPaid, paidAt, isDelivered, deliveredAt }) => (
+                <tr>
+                  <td>{_id}</td>
+                  <td>{createdAt.substr(0, 10)}</td>
+                  <td>
+                    {isPaid ? (
+                      paidAt.substr(0, 10)
+                    ) : (
+                      <i className="fas fa-times" style={{ color: "red" }} />
+                    )}
+                  </td>
+                  <td>
+                    {isDelivered ? (
+                      deliveredAt.substr(0, 10)
+                    ) : (
+                      <i className="fas fa-times" style={{ color: "red" }} />
+                    )}
+                  </td>
+                  <td>
+                    <LinkContainer to={`/order/${_id}`}>
+                      <Button variant="light" className="btn-sm text-center">
+                        Details
+                      </Button>
+                    </LinkContainer>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </Table>
+        )}
       </Col>
     </Row>
   );

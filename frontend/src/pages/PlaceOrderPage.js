@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 import CheckoutSteps from "../components/CheckoutSteps";
 import Message from "../components/Message";
 import { createOrder } from "../redux/actions/orderActions";
+import { ORDER_CREATE_RESET, ORDER_DETAILS_REQUEST } from "../redux/types";
 
 const PlaceOrderPage = ({ history }) => {
   const dispatch = useDispatch();
@@ -19,18 +20,21 @@ const PlaceOrderPage = ({ history }) => {
 
   useEffect(() => {
     if (success) {
+      dispatch({ type: ORDER_CREATE_RESET });
+      dispatch({ type: ORDER_DETAILS_REQUEST });
       history.push(`/order/${order._id}`);
     }
+    //eslint-disable-next-line
   }, [success, history, order]);
-
-  const itemsPrice = cartItems.reduce((acc, item) => acc + item.qty * item.price, 0);
-  const shippingPrice = itemsPrice * 0.1;
-  const taxPrice = itemsPrice * 0.05;
-  const totalPrice = itemsPrice + shippingPrice + taxPrice;
 
   const twoDecimals = (num) => {
     return num.toFixed(2);
   };
+
+  const itemsPrice = cartItems.reduce((acc, item) => acc + item.qty * item.price, 0);
+  const shippingPrice = itemsPrice * 0.07;
+  const taxPrice = itemsPrice * 0.05;
+  const totalPrice = itemsPrice + shippingPrice + taxPrice;
 
   const handleOrder = () => {
     dispatch(
@@ -38,10 +42,10 @@ const PlaceOrderPage = ({ history }) => {
         orderItems: cartItems,
         shippingAddress,
         paymentMethod,
-        itemsPrice,
-        shippingPrice,
-        taxPrice,
-        totalPrice,
+        itemsPrice: twoDecimals(itemsPrice),
+        shippingPrice: twoDecimals(shippingPrice),
+        taxPrice: twoDecimals(taxPrice),
+        totalPrice: twoDecimals(totalPrice),
       })
     );
   };
@@ -97,7 +101,7 @@ const PlaceOrderPage = ({ history }) => {
               </ListGroup.Item>
               <ListGroup.Item>
                 <Row>
-                  <Col>Items</Col>
+                  <Col>Items Price</Col>
                   <Col className="text-right">${twoDecimals(itemsPrice)}</Col>
                 </Row>
               </ListGroup.Item>
