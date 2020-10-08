@@ -5,9 +5,9 @@ import Message from "../components/Message";
 import Loader from "../components/Loader";
 import { getUserDetails, updateUserProfile } from "../redux/actions/userActions";
 import { getMyOrders } from "../redux/actions/orderActions";
-import { LinkContainer } from "react-router-bootstrap";
+import { ORDER_DETAILS_REQUEST } from "../redux/types";
 
-const ProfilePage = ({ location, history }) => {
+const ProfilePage = ({ history }) => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -51,6 +51,10 @@ const ProfilePage = ({ location, history }) => {
     }
   };
 
+  const handleClick = (id) => {
+    history.push(`/order/${id}`);
+    dispatch({ type: ORDER_DETAILS_REQUEST });
+  };
   return (
     <Row>
       <Col md={3}>
@@ -109,15 +113,17 @@ const ProfilePage = ({ location, history }) => {
         {orders && (
           <Table striped bordered hover responsive className="table-sm text-center">
             <thead>
-              <th>Id</th>
-              <th>Date</th>
-              <th>Paid</th>
-              <th>Delivered</th>
-              <th></th>
+              <tr>
+                <th>Id</th>
+                <th>Date</th>
+                <th>Paid</th>
+                <th>Delivered</th>
+                <th></th>
+              </tr>
             </thead>
             <tbody>
               {orders.map(({ _id, createdAt, isPaid, paidAt, isDelivered, deliveredAt }) => (
-                <tr>
+                <tr key={_id}>
                   <td>{_id}</td>
                   <td>{createdAt.substr(0, 10)}</td>
                   <td>
@@ -135,11 +141,13 @@ const ProfilePage = ({ location, history }) => {
                     )}
                   </td>
                   <td>
-                    <LinkContainer to={`/order/${_id}`}>
-                      <Button variant="light" className="btn-sm text-center">
-                        Details
-                      </Button>
-                    </LinkContainer>
+                    <Button
+                      variant="light"
+                      className="btn-sm text-center"
+                      onClick={() => handleClick(_id)}
+                    >
+                      Details
+                    </Button>
                   </td>
                 </tr>
               ))}
