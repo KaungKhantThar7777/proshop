@@ -12,6 +12,12 @@ const {
   ORDER_LIST_MY_REQUEST,
   ORDER_LIST_MY_SUCCESS,
   ORDER_LIST_MY_FAILURE,
+  ORDER_LIST_REQUEST,
+  ORDER_LIST_SUCCESS,
+  ORDER_LIST_FAILURE,
+  ORDER_DELIVER_REQUEST,
+  ORDER_DELIVER_SUCCESS,
+  ORDER_DELIVER_FAILURE,
 } = require("../types");
 
 export const createOrder = (order) => async (dispatch, getState) => {
@@ -89,6 +95,30 @@ export const payOrder = (orderId, paymentResult) => async (dispatch, getState) =
   }
 };
 
+export const deliverOrder = (orderId) => async (dispatch, getState) => {
+  try {
+    const {
+      userLogin: { userInfo },
+    } = getState();
+    dispatch({ type: ORDER_DELIVER_REQUEST });
+
+    const config = {
+      headers: {
+        Authorization: `Bearer ${userInfo.token}`,
+      },
+    };
+
+    const { data } = await axios.put(`/api/orders/${orderId}/deliver`, {}, config);
+
+    dispatch({ type: ORDER_DELIVER_SUCCESS, payload: data });
+  } catch (err) {
+    dispatch({
+      type: ORDER_DELIVER_FAILURE,
+      payload: err.response && err.response.data.message ? err.response.data.message : err.message,
+    });
+  }
+};
+
 export const getMyOrders = () => async (dispatch, getState) => {
   try {
     dispatch({ type: ORDER_LIST_MY_REQUEST });
@@ -108,6 +138,30 @@ export const getMyOrders = () => async (dispatch, getState) => {
   } catch (err) {
     dispatch({
       type: ORDER_LIST_MY_FAILURE,
+      payload: err.response && err.response.data.message ? err.response.data.message : err.message,
+    });
+  }
+};
+
+export const getOrders = () => async (dispatch, getState) => {
+  try {
+    dispatch({ type: ORDER_LIST_REQUEST });
+    const {
+      userLogin: { userInfo },
+    } = getState();
+
+    const config = {
+      headers: {
+        Authorization: `Bearer ${userInfo.token}`,
+      },
+    };
+
+    const { data } = await axios.get("/api/orders", config);
+
+    dispatch({ type: ORDER_LIST_SUCCESS, payload: data });
+  } catch (err) {
+    dispatch({
+      type: ORDER_LIST_FAILURE,
       payload: err.response && err.response.data.message ? err.response.data.message : err.message,
     });
   }

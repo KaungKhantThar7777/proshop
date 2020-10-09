@@ -38,7 +38,6 @@ const UserEditPage = ({ match, history }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log({ isAdmin });
     dispatch(updateUser({ _id: userId, name, email, isAdmin }));
   };
 

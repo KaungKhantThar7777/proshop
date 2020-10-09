@@ -6,7 +6,7 @@ import Loader from "../components/Loader";
 import Message from "../components/Message";
 
 import Product from "../components/Product";
-import { listProducts } from "../redux/actions/productListActions";
+import { listProducts } from "../redux/actions/productActions";
 
 const HomePage = () => {
   const dispatch = useDispatch();
