@@ -1,5 +1,4 @@
-import React, { useState } from "react";
-import { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Card, Col, Image, ListGroup, Row } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
@@ -11,7 +10,7 @@ import Message from "../components/Message";
 import { deliverOrder, getOrderDetails, payOrder } from "../redux/actions/orderActions";
 import { ORDER_DELIVER_RESET, ORDER_PAY_RESET } from "../redux/types";
 
-const OrderPage = ({ match }) => {
+const OrderPage = ({ match, history }) => {
   const orderId = match.params.id;
 
   const [sdkReady, setSdkReady] = useState(false);
@@ -28,6 +27,10 @@ const OrderPage = ({ match }) => {
 
   const orderDeliver = useSelector((state) => state.orderDeliver);
   const { success: successDeliver } = orderDeliver;
+
+  useEffect(() => {
+    if (!userInfo) history.push("/login");
+  }, [userInfo, history]);
 
   useEffect(() => {
     if (!order || successPay || successDeliver) {

@@ -39,6 +39,37 @@ export const createProduct = handler(async (req, res) => {
   res.status(201).json(createdProduct);
 });
 
+export const createProductReview = handler(async (req, res) => {
+  const { name, comment, rating } = req.body;
+
+  const product = await Product.findById(req.params.id);
+  if (product) {
+    const alreadyReviewed = product.reviews.find((r) => r.user.toString() === req.user.toString());
+    if (alreadyReviewed) {
+      res.status(400);
+      throw new Error("Already reviewed for this product");
+    }
+
+    const review = {
+      name,
+      comment,
+      rating: Number(rating),
+      user: req.user,
+    };
+
+    product.reviews.push(review);
+    product.numReviews++;
+    product.rating =
+      product.reviews.reduce((acc, review) => acc + review.rating, 0) / product.reviews.length;
+
+    await product.save();
+    res.json({ message: "Review added" });
+  } else {
+    res.status(404);
+    throw new Error("User not found");
+  }
+});
+
 export const updateProduct = handler(async (req, res) => {
   const { name, price, description, image, brand, category, countInStock } = req.body;
 
