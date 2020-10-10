@@ -27,6 +27,10 @@ function App() {
       <main className="mt-5">
         <Container>
           <Route exact path="/" component={HomePage} />
+          <Route exact path="/page/:pageNumber" component={HomePage} /> {/*for pagination*/}
+          <Route exact path="/search/:keyword" component={HomePage} />
+          <Route exact path="/search/:keyword/page/:pageNumber" component={HomePage} />{" "}
+          {/*for pagination*/}
           <Route path="/product/:id" component={ProductPage} />
           <Route path="/cart/:id?" component={CartPage} />
           <Route path="/login" component={LoginPage} />
@@ -38,7 +42,9 @@ function App() {
           <Route path="/order/:id" component={OrderPage} />
           <Route path="/admin/userlist" component={UserListPage} />
           <Route path="/admin/user/:id/edit" component={UserEditPage} />
-          <Route path="/admin/productlist" component={ProductListPage} />
+          <Route exact path="/admin/productlist" component={ProductListPage} />
+          <Route path="/admin/productlist/page/:pageNumber" component={ProductListPage} />{" "}
+          {/*for pagination*/}
           <Route path="/admin/product/:id/edit" component={ProductEditPage} />
           <Route path="/admin/orderlist" component={OrderListPage} />
         </Container>

@@ -4,16 +4,19 @@ import { useDispatch, useSelector } from "react-redux";
 import { LinkContainer } from "react-router-bootstrap";
 import Loader from "../components/Loader";
 import Message from "../components/Message";
+import Paginate from "../components/Paginate";
 import { deleteProduct, listProducts, createProduct } from "../redux/actions/productActions";
 import { PRODUCT_CREATE_RESET } from "../redux/types";
 
-const ProductListPage = ({ history }) => {
+const ProductListPage = ({ match, history }) => {
+  const pageNumber = match.params.pageNumber || 1;
+
   const dispatch = useDispatch();
   const userLogin = useSelector((state) => state.userLogin);
   const { userInfo } = userLogin;
 
   const productList = useSelector((state) => state.productList);
-  const { loading, error, products } = productList;
+  const { loading, error, products, pages, page } = productList;
 
   const productDelete = useSelector((state) => state.productDelete);
   const { loading: loadingDelete, error: errorDelete, success: successDelete } = productDelete;
@@ -36,9 +39,9 @@ const ProductListPage = ({ history }) => {
     if (successCreate) {
       history.push(`/admin/product/${createdProduct._id}/edit`);
     } else {
-      dispatch(listProducts());
+      dispatch(listProducts("", pageNumber));
     }
-  }, [dispatch, userInfo, history, successDelete, successCreate, createdProduct]);
+  }, [dispatch, userInfo, history, successDelete, successCreate, createdProduct, pageNumber]);
 
   if (loading || loadingDelete || loadingCreate) {
     return <Loader />;
@@ -103,6 +106,7 @@ const ProductListPage = ({ history }) => {
           ))}
         </tbody>
       </Table>
+      <Paginate pages={pages} page={page} isAdmin={true} />
     </>
   );
 };

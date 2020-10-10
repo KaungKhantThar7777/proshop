@@ -3,7 +3,27 @@ import handler from "express-async-handler";
 import Product from "../models/Product.js";
 
 export const getProducts = handler(async (req, res) => {
-  const products = await Product.find();
+  const pageSize = 8;
+  const page = Number(req.query.pageNumber) || 1;
+
+  const keyword = req.query.keyword
+    ? {
+        name: {
+          $regex: req.query.keyword,
+          $options: "i",
+        },
+      }
+    : {};
+  const total = await Product.countDocuments(keyword);
+  const products = await Product.find(keyword)
+    .skip(pageSize * (page - 1))
+    .limit(pageSize);
+
+  res.json({ pages: Math.ceil(total / pageSize), page, products });
+});
+
+export const getTopProducts = handler(async (req, res) => {
+  const products = await Product.find({}).sort({ rating: -1 }).limit(3);
 
   res.json(products);
 });

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { ListGroup, Row, Col, Card, Image, Button, Form } from "react-bootstrap";
+import Meta from "../components/Meta";
 import { Link } from "react-router-dom";
 import Rating from "../components/Rating";
 import { useDispatch } from "react-redux";
@@ -64,6 +65,7 @@ const ProductPage = ({ match, history }) => {
         Go Back
       </Link>
       <Row>
+        <Meta title={product.name} />
         <Col md={5}>
           <Image src={product.image} alt="Product image" fluid />
         </Col>
