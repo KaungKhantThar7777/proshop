@@ -24,12 +24,17 @@ function App() {
   return (
     <Router>
       <Header />
-      <main className="mt-5">
+      <main className="mt-2">
         <Container>
           <Route exact path="/" component={HomePage} />
-          <Route exact path="/page/:pageNumber" component={HomePage} /> {/*for pagination*/}
+          <Route exact path="/page/:pageNumber" component={HomePage} />{" "}
+          {/*for pagination*/}
           <Route exact path="/search/:keyword" component={HomePage} />
-          <Route exact path="/search/:keyword/page/:pageNumber" component={HomePage} />{" "}
+          <Route
+            exact
+            path="/search/:keyword/page/:pageNumber"
+            component={HomePage}
+          />{" "}
           {/*for pagination*/}
           <Route path="/product/:id" component={ProductPage} />
           <Route path="/cart/:id?" component={CartPage} />
@@ -43,7 +48,10 @@ function App() {
           <Route path="/admin/userlist" component={UserListPage} />
           <Route path="/admin/user/:id/edit" component={UserEditPage} />
           <Route exact path="/admin/productlist" component={ProductListPage} />
-          <Route path="/admin/productlist/page/:pageNumber" component={ProductListPage} />{" "}
+          <Route
+            path="/admin/productlist/page/:pageNumber"
+            component={ProductListPage}
+          />{" "}
           {/*for pagination*/}
           <Route path="/admin/product/:id/edit" component={ProductEditPage} />
           <Route path="/admin/orderlist" component={OrderListPage} />
